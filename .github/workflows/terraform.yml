@@ -35,8 +35,7 @@ jobs:
  
 
     - name: Login to Azure
-      run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }} --subscription {{ secrets.ARM_SUBSCRIPTION_ID }}
- 
+      run: az resource list --subscription edcc2f72-6799-49db-b170-9e67144fa439 
 
     - name: Initialize Terraform
       run: terraform init
