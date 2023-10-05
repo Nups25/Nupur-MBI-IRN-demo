@@ -1,4 +1,4 @@
-name: Terraform Azure
+name: Azure Login and Azure CLI Setup
 
 on:
   push:
@@ -6,28 +6,24 @@ on:
       - main
 
 jobs:
-  terraform:
+  azure-cli:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: 1.0.0
-
-    - name: Azure Login
+    - name: Install Azure CLI
       run: |
+        # Install the Azure CLI
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Set up Azure CLI
+      run: |
+        # Log in to Azure using the service principal credentials
         az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-        az account set --subscription ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        # Set the default subscription (optional)
+        az account set --subscription edcc2f72-6799-49db-b170-9e67144fa439
 
-    - name: Terraform Init
-      run: terraform init
-
-    - name: Terraform Plan
-      run: terraform plan -input=false
-
-    - name: Terraform Apply
-      run: terraform apply -input=false -auto-approve
+    - name: List Azure subscriptions
+      run: az account list
