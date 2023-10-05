@@ -1,4 +1,4 @@
-name: Azure Login and Azure CLI Setup
+name: Azure Login
 
 on:
   push:
@@ -6,24 +6,14 @@ on:
       - main
 
 jobs:
-  azure-cli:
+  azure-login:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install Azure CLI
-      run: |
-        # Install the Azure CLI
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
     - name: Set up Azure CLI
-      run: |
-        # Log in to Azure using the service principal credentials
-        az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-        # Set the default subscription (optional)
-        az account set --subscription edcc2f72-6799-49db-b170-9e67144fa439
-
-    - name: List Azure subscriptions
-      run: az account list
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CLIENT_ID }} ${{ secrets.AZURE_CLIENT_SECRET }} ${{ secrets.AZURE_TENANT_ID }}
