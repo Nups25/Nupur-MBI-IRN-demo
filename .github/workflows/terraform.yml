@@ -59,7 +59,4 @@ jobs:
     - name: Clean up Terraform files
       run: rm -rf .terraform
 
- 
 
-    - name: Logout from Azure
-      uses: azure/logout@v1
