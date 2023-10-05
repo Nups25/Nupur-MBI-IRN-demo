@@ -1,22 +1,60 @@
+name: Terraform Azure
 
-# File: .github/workflows/OIDC_login.yml
+ 
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
-name: AzureLoginSample
+ 
 
 jobs:
-
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+
+ 
+
     steps:
-    
-    - name: 'Az CLI login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    
-    - run: |
-        az webapp list --query "[?state=='Running']"
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+ 
+
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+ 
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+ 
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+ 
+
+    - name: Initialize Terraform
+      run: terraform init
+
+ 
+
+    - name: Plan Terraform
+      run: terraform plan -out=tfplan
+
+ 
+
+    - name: Apply Terraform
+      run: terraform apply -auto-approve tfplan
+
+ 
+
+    - name: Clean up Terraform files
+      run: rm -rf .terraform
