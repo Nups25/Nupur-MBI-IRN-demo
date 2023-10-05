@@ -31,6 +31,15 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.0.0
+    - name: Check Azure CLI Installation
+      run: |
+       az --version
+      continue-on-error: true
+
+    - name: Azure CLI Login
+      run: |
+        az login --service-principal -u ${{ secrets.AZURE_CREDENTIALS.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CREDENTIALS.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_CREDENTIALS.AZURE_TENANT_ID }}
+        az account set --subscription ${{ secrets.AZURE_CREDENTIALS.ARM_SUBSCRIPTION_ID }}
 
  
 
